@@ -47,7 +47,7 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.logoContainer}>
         {/* Add your logo component here */}
         <Image
-          source = {require('../src/assests/logo_unique.jpg')}
+          source = {require('../src/assests/logo_pastpupil.png')}
           style={styles.logo}
           resizeMode='contain'
           />
@@ -89,14 +89,19 @@ const styles = StyleSheet.create({
   // ... (existing styles)
   container: {
     flex: 1,
-    backgroundColor: '#FFA500', // Orange color
+    backgroundColor: '#f1b143', // Orange color
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
   },
   logoContainer: {
     // Add styles for your logo component
-    
+    //position: 'absolute',
+    width: 70,
+    height: 70,
+    position: 'absolute',
+    top: 80,
+    left: 30,
   },
   title: {
     fontSize: 24,
@@ -110,33 +115,35 @@ const styles = StyleSheet.create({
     borderRadius: 20, // Added border radius for rounded corners
     marginBottom: 10,
     paddingHorizontal: 10,
+    fontFamily: 'Work Sans ',
   },
   forgotPasswordButton: {
     alignSelf: 'flex-end',
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: 'blue',
     textDecorationLine: 'underline',
+    fontFamily: 'Work Sans Light',
   },
   buttonsContainer: {
     flexDirection: 'row', // Added to display buttons horizontally
   },
   button: {
-    backgroundColor: 'navy',
+    backgroundColor: '#2b2b33',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20, // Added border radius for rounded buttons
-    marginHorizontal: 5, // Added horizontal margin for spacing
+    marginVertical: 5, // Added horizontal margin for spacing
     flex: 1, // Added to make buttons equal length
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center', // Added to center text in buttons
+    fontFamily: 'Work Sans SemiBold'
   },
   registerButton: {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: 'navy',
   },
