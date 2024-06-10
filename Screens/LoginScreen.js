@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
@@ -6,6 +6,8 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [emailTimeout, setEmailTimeout] = useState(null);
+  const [passwordTimeout, setPasswordTimeout] = useState(null);
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,33 +19,44 @@ const LoginScreen = ({ navigation }) => {
     return passwordRegex.test(password);
   };
 
+  const handleEmailChange = (text) => {
+    setEmail(text);
+    clearTimeout(emailTimeout);
+    const newTimeout = setTimeout(() => {
+      if (!validateEmail(text)) {
+        setEmailError('Please enter a valid email address.');
+      } else {
+        setEmailError('');
+      }
+    }, 500); // Adjust the delay (in milliseconds) as needed
+    setEmailTimeout(newTimeout);
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+    clearTimeout(passwordTimeout);
+    const newTimeout = setTimeout(() => {
+      if (!validatePassword(text)) {
+        setPasswordError(
+          'Password must be at least 8 characters long'
+        );
+      } else {
+        setPasswordError('');
+      }
+    }, 500); // Adjust the delay (in milliseconds) as needed
+    setPasswordTimeout(newTimeout);
+  };
+
   const handleLogin = () => {
-    let isValid = true;
-
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError('');
-    }
-
-    if (!validatePassword(password)) {
-      setPasswordError(
-        'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one special character.'
-      );
-      isValid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    if (isValid) {
+    if (validateEmail(email) && validatePassword(password)) {
       // Proceed with login logic
-      navigation.navigate('Home')
+      navigation.navigate('Home');
     }
   };
 
   return (
     <View style={styles.container}>
+      {/* ... (existing JSX code) */}
       <View style={styles.logoContainer}>
         {/* Add your logo component here */}
         <Image
@@ -53,23 +66,26 @@ const LoginScreen = ({ navigation }) => {
           />
       </View>
       <Text style={styles.title}>Welcome to the Unique Schools Alumni App</Text>
+      <View style={styles.inputContainer}>
       <TextInput
         style={[styles.input, emailError ? styles.inputError : null]}
         placeholder="Email"
         placeholderTextColor="#666"
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={handleEmailChange}
       />
       {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+      
       <TextInput
         style={[styles.input, passwordError ? styles.inputError : null]}
         placeholder="Password"
         placeholderTextColor="#666"
         secureTextEntry
         value={password}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={handlePasswordChange}
       />
       {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+      {/* ... (remaining JSX code) */}
       <TouchableOpacity style={styles.forgotPasswordButton}>
         <Text style={styles.forgotPasswordText}>Forgot password</Text>
       </TouchableOpacity>
@@ -80,6 +96,7 @@ const LoginScreen = ({ navigation }) => {
         <TouchableOpacity style={[styles.button, styles.registerButton]}>
           <Text style={[styles.buttonText, styles.registerButtonText]}>Register</Text>
         </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -126,7 +143,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Work Sans Light',
   },
   buttonsContainer: {
-    flexDirection: 'row', // Added to display buttons horizontally
+    //flexDirection: 'row',
+    width: '100%' // Added to display buttons horizontally
   },
   button: {
     backgroundColor: '#2b2b33',
@@ -134,7 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20, // Added border radius for rounded buttons
     marginVertical: 5, // Added horizontal margin for spacing
-    flex: 1, // Added to make buttons equal length
+    //flex: 1, // Added to make buttons equal length
   },
   buttonText: {
     color: 'white',
@@ -154,10 +172,15 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginBottom: 10,
+    marginLeft: 10,
   },
   inputError: {
     borderWidth: 2,
     borderColor: 'red',
+  },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 10,
   },
 });
 
