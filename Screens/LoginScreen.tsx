@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     backgroundColor: 'white',
-    borderRadius: 20, // Added border radius for rounded corners
+    borderRadius: 10, // Added border radius for rounded corners
     marginBottom: 10,
     paddingHorizontal: 10,
     fontFamily: 'Work Sans ',
@@ -144,11 +144,13 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     //flexDirection: 'row',
-    width: '100%' // Added to display buttons horizontally
+    width: '100%' ,// Added to display buttons horizontally
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#2b2b33',
     paddingVertical: 10,
+    width: '50%',
     paddingHorizontal: 20,
     borderRadius: 20, // Added border radius for rounded buttons
     marginVertical: 5, // Added horizontal margin for spacing
