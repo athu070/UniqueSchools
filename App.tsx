@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import LoginScreen from './Screens/LoginScreen';
@@ -15,14 +15,27 @@ import NewNotification from './Screens/NewNotification';
 import NewGalleryScreen from './Screens/NewGalleryScreen';
 import DetailsScreen from './Screens/DetailsScreen';
 
+type DrawerParamList = {
+  GalleryScreen: undefined;
+  Navbar: undefined;
+  NotificationScreen: undefined;
+  HomeScreen: undefined;
+  NewNotification: undefined;
+  NewGalleryScreen: undefined;
+};
 
-// Create a Drawer Navigator
-const Drawer = createDrawerNavigator();
+type StackParamList = {
+  Login: undefined;
+  Home: undefined;
+  ImageDetail: undefined;
+  DetailScreen: undefined;
+  DetailsScreen: undefined;
+};
 
-// Create a Stack Navigator for Login flow
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator<DrawerParamList>();
+const Stack = createStackNavigator<StackParamList>();
 
-const CustomDrawerContent = (props) => (
+const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => (
   <DrawerContentScrollView {...props}>
     <View style={styles.header}>
       <Image
@@ -37,18 +50,13 @@ const CustomDrawerContent = (props) => (
   </DrawerContentScrollView>
 );
 
-const HomeDrawerNavigator = () => (
+const HomeDrawerNavigator: React.FC = () => (
   <Drawer.Navigator
     initialRouteName="GalleryScreen"
-    
     screenOptions={{
-      headerStyle: {
-        backgroundColor: 'red', 
-      },
-      headerTintColor: '#fff', 
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
+      headerStyle: { backgroundColor: 'red' },
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: 'bold' },
     }}
     drawerContent={(props) => <CustomDrawerContent {...props} />}
   >
@@ -61,18 +69,15 @@ const HomeDrawerNavigator = () => (
   </Drawer.Navigator>
 );
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={HomeDrawerNavigator} options={{ headerShown: false }}/>
-        <Stack.Screen name="GalleryScreen" component={GalleryScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="ImageDetail" component={ImageDetail} options={{ headerShown: false }}/>
-        <Stack.Screen name="DetailScreen" component={DetailScreen} options={{ headerShown: false }}/>
-        <Stack.Screen name="NewGalleryScreen" component={NewGalleryScreen} options={{ headerShown: false }}/>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeDrawerNavigator} />
+        <Stack.Screen name="ImageDetail" component={ImageDetail} />
+        <Stack.Screen name="DetailScreen" component={DetailScreen} />
         <Stack.Screen name="DetailsScreen" component={DetailsScreen} />
-        
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -83,6 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     padding: 20,
     paddingTop: 40,
+    alignItems: 'center',
   },
   logo: {
     width: 50,
@@ -101,15 +107,6 @@ const styles = StyleSheet.create({
   school: {
     color: 'white',
     fontSize: 14,
-  },
-  drawerItems: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 
