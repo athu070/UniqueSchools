@@ -1,13 +1,23 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import axios from 'axios';
 
-const NewGalleryScreen = () => {
-  const navigation = useNavigation();
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
+type Product = {
+  id: number;
+  title: string;
+  images: string[];
+};
+
+type RootStackParamList = {
+  DetailsScreen: { title: string; images: string[] };
+};
+
+const NewGalleryScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [data, setData] = useState<Product[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
     console.log("Fetch called");
@@ -39,7 +49,7 @@ const NewGalleryScreen = () => {
     });
   }, [navigation]);
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: Product }) => (
     <TouchableOpacity 
       key={item.id} 
       style={styles.itemContainer} 

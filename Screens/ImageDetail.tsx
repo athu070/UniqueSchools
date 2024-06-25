@@ -1,7 +1,19 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-const ImageDetail = ({ route }) => {
+interface ImageDetailProps {
+  route: {
+    params: {
+      item: {
+        uri: string;
+        title: string;
+        date: string;
+      };
+    };
+  };
+}
+
+const ImageDetail: React.FC<ImageDetailProps> = ({ route }) => {
   const { item } = route.params;
 
   return (
