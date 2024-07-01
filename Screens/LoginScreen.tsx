@@ -1,101 +1,105 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [emailTimeout, setEmailTimeout] = useState(null);
-  const [passwordTimeout, setPasswordTimeout] = useState(null);
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+interface LoginScreenProps {
+  navigation: {
+    navigate: (screen: string) => void;
   };
+}
 
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
-  };
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
 
-  const handleEmailChange = (text) => {
-    setEmail(text);
-    clearTimeout(emailTimeout);
-    const newTimeout = setTimeout(() => {
-      if (!validateEmail(text)) {
+  useEffect(() => {
+    const validate = setTimeout(() => {
+      if (email && !validateEmail(email)) {
         setEmailError('Please enter a valid email address.');
       } else {
         setEmailError('');
       }
-    }, 500); // Adjust the delay (in milliseconds) as needed
-    setEmailTimeout(newTimeout);
-  };
+    }, 500);
 
-  const handlePasswordChange = (text) => {
-    setPassword(text);
-    clearTimeout(passwordTimeout);
-    const newTimeout = setTimeout(() => {
-      if (!validatePassword(text)) {
-        setPasswordError(
-          'Password must be at least 8 characters long'
-        );
+    return () => clearTimeout(validate);
+  }, [email]);
+
+  useEffect(() => {
+    const validate = setTimeout(() => {
+      if (password && !validatePassword(password)) {
+        setPasswordError('Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.');
       } else {
         setPasswordError('');
       }
-    }, 500); // Adjust the delay (in milliseconds) as needed
-    setPasswordTimeout(newTimeout);
+    }, 500);
+
+    return () => clearTimeout(validate);
+  }, [password]);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
-  const handleLogin = () => {
+  const validatePassword = (password: string): boolean => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const handleLogin = (): void => {
     if (validateEmail(email) && validatePassword(password)) {
-      // Proceed with login logic
       navigation.navigate('Home');
+    } else {
+      if (!validateEmail(email)) setEmailError('Please enter a valid email address.');
+      if (!validatePassword(password)) setPasswordError('Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.');
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* ... (existing JSX code) */}
       <View style={styles.logoContainer}>
-        {/* Add your logo component here */}
         <Image
-          source = {require('../src/assests/logo_pastpupil.png')}
+          source={require('../src/logo_pastpupil.png')}
           style={styles.logo}
           resizeMode='contain'
-          />
+        />
       </View>
       <Text style={styles.title}>Welcome to the Unique Schools Alumni App</Text>
       <View style={styles.inputContainer}>
-      <TextInput
-        style={[styles.input, emailError ? styles.inputError : null]}
-        placeholder="Email"
-        placeholderTextColor="#666"
-        value={email}
-        onChangeText={handleEmailChange}
-      />
-      {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-      
-      <TextInput
-        style={[styles.input, passwordError ? styles.inputError : null]}
-        placeholder="Password"
-        placeholderTextColor="#666"
-        secureTextEntry
-        value={password}
-        onChangeText={handlePasswordChange}
-      />
-      {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-      {/* ... (remaining JSX code) */}
-      <TouchableOpacity style={styles.forgotPasswordButton}>
-        <Text style={styles.forgotPasswordText}>Forgot password</Text>
-      </TouchableOpacity>
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TextInput
+          style={[styles.input, emailError ? styles.inputError : null]}
+          placeholder="Email"
+          placeholderTextColor="#666"
+          value={email}
+          onChangeText={setEmail}
+          accessibilityLabel="Email input"
+          accessibilityHint="Enter your email address"
+        />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+        <TextInput
+          style={[styles.input, passwordError ? styles.inputError : null]}
+          placeholder="Password"
+          placeholderTextColor="#666"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          accessibilityLabel="Password input"
+          accessibilityHint="Enter your password"
+        />
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+        <TouchableOpacity style={styles.forgotPasswordButton} accessibilityLabel="Forgot password button" accessibilityHint="Navigate to password recovery">
+          <Text style={styles.forgotPasswordText}>Forgot password</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.registerButton]}>
-          <Text style={[styles.buttonText, styles.registerButtonText]}>Register</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleLogin} accessibilityLabel="Login button" accessibilityHint="Attempt to log in with entered credentials">
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.registerButton]} onPress={() => navigation.navigate('Register')} accessibilityLabel="Register button" accessibilityHint="Navigate to registration page">
+            <Text style={[styles.buttonText, styles.registerButtonText]}>Register</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -103,7 +107,6 @@ const LoginScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  // ... (existing styles)
   container: {
     flex: 1,
     backgroundColor: '#f1b143', // Orange color
@@ -112,27 +115,32 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logoContainer: {
-    // Add styles for your logo component
-    //position: 'absolute',
     width: 70,
     height: 70,
     position: 'absolute',
     top: 80,
     left: 30,
   },
+  logo: {
+    width: '100%',
+    height: '100%',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  inputContainer: {
+    width: '100%',
+    marginBottom: 10,
+  },
   input: {
     width: '100%',
     height: 40,
     backgroundColor: 'white',
-    borderRadius: 10, // Added border radius for rounded corners
+    borderRadius: 10,
     marginBottom: 10,
     paddingHorizontal: 10,
-    fontFamily: 'Work Sans ',
   },
   forgotPasswordButton: {
     alignSelf: 'flex-end',
@@ -140,27 +148,22 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     textDecorationLine: 'underline',
-    fontFamily: 'Work Sans Light',
   },
   buttonsContainer: {
-    //flexDirection: 'row',
-    width: '100%' ,// Added to display buttons horizontally
+    width: '100%',
     alignItems: 'center',
   },
   button: {
     backgroundColor: '#2b2b33',
     paddingVertical: 10,
-    width: '50%',
-    paddingHorizontal: 20,
-    borderRadius: 20, // Added border radius for rounded buttons
-    marginVertical: 5, // Added horizontal margin for spacing
-    //flex: 1, // Added to make buttons equal length
+    width: '100%',
+    borderRadius: 20,
+    marginVertical: 5,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-    textAlign: 'center', // Added to center text in buttons
-    fontFamily: 'Work Sans SemiBold'
+    textAlign: 'center',
   },
   registerButton: {
     backgroundColor: 'transparent',
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
     borderColor: 'navy',
   },
   registerButtonText: {
-    color: 'black', // Added to change the register button text color to black
+    color: 'black',
   },
   errorText: {
     color: 'red',
@@ -179,10 +182,6 @@ const styles = StyleSheet.create({
   inputError: {
     borderWidth: 2,
     borderColor: 'red',
-  },
-  inputContainer: {
-    width: '100%',
-    marginBottom: 10,
   },
 });
 
